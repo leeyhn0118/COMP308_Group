@@ -20,4 +20,8 @@ export default defineConfig({
     minify: false,
     cssCodeSplit: false,
   },
+  server: {
+    port: 3001,
+    strictPort: true,
+  },
 });

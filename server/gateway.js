@@ -1,62 +1,44 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
-import express from 'express';
+import { ApolloGateway, IntrospectAndCompose } from '@apollo/gateway'; 
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloGateway, IntrospectAndCompose, RemoteGraphQLDataSource  } from '@apollo/gateway';
+import express from 'express'; 
+import http from 'http';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
 
 const app = express();
-app.use(express.json());  
-app.use(express.urlencoded({ extended: true }));
+
+const httpServer = http.createServer(app);
 
 app.use(cors({
-  origin: ['http://localhost:3003', 'http://localhost:3004', 'http://localhost:3005'],
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'], 
   credentials: true,
 }));
-app.use(cookieParser());
+
+app.use(express.json()); 
 
 const gateway = new ApolloGateway({
   supergraphSdl: new IntrospectAndCompose({
     subgraphs: [
-      { name: 'auth', url: `http://localhost:${process.env.AUTH_PORT || 4001}/graphql` }, 
-      { name: 'community', url: `http://localhost:${process.env.COMMUNITY_PORT || 4002}/graphql` }, 
-      { name: 'business', url: `http://localhost:${process.env.BUSINESS_PORT || 4003}/graphql` }, 
-      //{ name: 'ai', url: `http://localhost:${process.env.AI_PORT || 4004}/graphql` }, 
+      { name: 'auth-service', url: 'http://localhost:4001/graphql' },
+      { name: 'community-service', url: 'http://localhost:4002/graphql' },
+      { name: 'business-service', url: 'http://localhost:4003/graphql' },
+      { name: 'ai-service', url: 'http://localhost:4004/graphql' },
     ],
+    pollIntervalInMs: 60000, 
   }),
-  buildService({ name, url }) {
-    return new RemoteGraphQLDataSource({
-      url,
-      willSendRequest({ request, context }) {
-        if (context.token) {
-          request.http.headers.set('authorization', `Bearer ${context.token}`);
-        }
-      },
-    });
-  }
+  introspection: true,
 });
 
 const server = new ApolloServer({
   gateway,
-  introspection: true,
 });
 
 async function startServer() {
   await server.start();
-  
-  app.use('/graphql', expressMiddleware(server, {
-    context: async ({ req }) => {
-      const token = req.cookies?.token;
-      return { token }; 
-    }
-  }));
-  
-  app.listen(4000, () => {
-    console.log(`🚀 API Gateway ready at http://localhost:4000/graphql`);
-  });
+  app.use('/graphql', expressMiddleware(server));
+
+  await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
+  console.log('Apollo Gateway running at http://localhost:4000/graphql');
 }
 
 startServer();

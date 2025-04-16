@@ -1,43 +1,39 @@
-import gql from 'graphql-tag';
+import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
-
-  type SummarizationResult {
-    summary: String!
+  extend type Business @key(fields: "id") {
+    id: ID! @external 
+    name: String @external 
+    category: String @external 
   }
 
   type SentimentResult {
-    sentiment: String! 
-    score: Float 
+    positive: Float
+    neutral: Float
+    negative: Float
   }
 
-  input VolunteerProfileInput {
+  type Recommendation {
     id: ID!
-    skills: [String]
-    availability: String
+    title: String!
+    description: String
+    business: Business! 
+    confidence: Float
   }
 
-  type VolunteerProfile {
-     id: ID!
-     skills: [String]
-     availability: String
+  type TrendReport {
+    trends: [String]
+    insights: [String]
   }
-
-   type VolunteerMatchResult {
-     matchedVolunteers: [VolunteerProfile]!
-     matchScore: Float 
-   }
 
   type Query {
-    _aiServicePlaceholder: String
+    analyzeSentiment(content: String!): SentimentResult
+    getRecommendations(location: String!): [Recommendation]
   }
 
   type Mutation {
-    summarizeText(text: String!): SummarizationResult
-    analyzeSentiment(text: String!): SentimentResult
-    matchVolunteers(description: String!, requiredSkills: [String], volunteers: [VolunteerProfileInput!]!): VolunteerMatchResult
+    generateTrendReport(category: String!): TrendReport
   }
-
 `;
 
 export default typeDefs;

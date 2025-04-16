@@ -1,18 +1,22 @@
 import React from 'react';
-import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
-import UserComponent from './UserComponent';
+import { Routes, Route, Link } from 'react-router-dom';
+import SignUpForm from './components/SignupForm';
+import SignInForm from './components/SignInForm';
 
-const client = new ApolloClient({
-  uri: 'http://localhost:4004/graphql',
-  cache: new InMemoryCache(),
-  credentials: 'include',
-});
 
 function App() {
+  console.log("User App Mounted")
   return (
-    <ApolloProvider client={client}>
-      <UserComponent />
-    </ApolloProvider>
+      <div>
+        <nav>
+          <Link to="login">Login</Link> | <Link to="signup">Sign Up</Link>
+        </nav>
+        <Routes>
+          <Route path="signup" element={<SignUpForm />} />
+          <Route path="login" element={<SignInForm />} />
+           <Route path="/" element={<SignInForm />} />
+        </Routes>
+      </div>
   );
 }
 

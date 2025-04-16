@@ -1,19 +1,17 @@
 import React from 'react';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { Routes, Route } from 'react-router-dom';
 import CommunityComponent from './CommunityComponent';
-import AIChatBotComponent from './AIChatBotComponent';
 
-const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql',
-  cache: new InMemoryCache(),
-  credentials: 'include',
-});
+function App() {
+  console.log("CommunityApp Mounted by Shell");
 
-export default function App() {
   return (
-    <ApolloProvider client={client}>
-      <CommunityComponent />
-      <AIChatBotComponent />
-    </ApolloProvider>
+    <div>
+      <Routes>
+        <Route path="/" element={<CommunityComponent />} />
+      </Routes>
+    </div>
   );
 }
+
+export default App;

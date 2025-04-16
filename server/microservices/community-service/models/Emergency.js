@@ -38,4 +38,8 @@ const EmergencyAlertSchema = new mongoose.Schema(
 
 const EmergencyAlert = mongoose.model("EmergencyAlert", EmergencyAlertSchema);
 
+<<<<<<< HEAD
 export default EmergencyAlert;
+=======
+export default EmergencyAlert;
+>>>>>>> b160ce5 (front)

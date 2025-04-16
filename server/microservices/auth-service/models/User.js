@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     role: {
       type: String,
+<<<<<<< HEAD
       enum: ["resident", "business_owner", "community_organizer"],
       required: true,
     },
@@ -26,6 +27,21 @@ userSchema.pre("save", async function (next) {
   } catch (err) {
     next(err);
   }
+=======
+      enum: ['resident', 'business_owner', 'community_organizer'],
+      required: true,
+    },
+    location: { type: String },
+    interests: [String], 
+  },
+  { timestamps: true }
+);
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+>>>>>>> b160ce5 (front)
 });
 
 userSchema.methods.comparePassword = async function (password) {

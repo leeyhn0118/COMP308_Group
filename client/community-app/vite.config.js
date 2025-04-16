@@ -21,7 +21,7 @@ export default defineConfig({
     cssCodeSplit: false,
   },
   server: {
-    port: 3005,
+    port: 3002,
     strictPort: true,
   }
 });

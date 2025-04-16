@@ -13,21 +13,67 @@ type User {
     title: String!
     content: String!
     category: String!
-    aiSummary: String
     createdAt: String
     updatedAt: String
-    author: ID!
+    author: User 
   }
 
-  type HelpRequest {
+  type HelpRequest @key(fields: "id") {
     id: ID!
     description: String!
     location: String
     isResolved: Boolean
-    volunteers: [ID]
+    requiredSkills: [String]
+    volunteers: [User] 
     createdAt: String
     updatedAt: String
-    author: ID!
+    author: User 
+  }
+
+  type EmergencyAlert @key(fields: "id") {
+    id: ID!
+    author: User! 
+    title: String!
+    message: String!
+    location: String!
+    isResolved: Boolean!
+    createdAt: String!
+    updatedAt: String
+  }
+
+  type NewsItem @key(fields: "id") {
+    id: ID!
+    title: String!
+    content: String!
+    source: String
+    publicationDate: String
+    category: String
+    summary: String
+    createdAt: String
+    updatedAt: String
+    author: User 
+  }
+
+  type Event @key(fields: "id") {
+    id: ID!
+    title: String!
+    description: String!
+    date: String!
+    startTime: String
+    endTime: String
+    location: Location
+    organizer: User! 
+    category: String!
+    requiredVolunteers: [RequiredVolunteer]
+    attendees: [User] 
+    tags: [String]
+    createdAt: String
+    updatedAt: String
+  }
+
+  type Location {
+    name: String
+    address: String
   }
 
   type AIResponse {
@@ -55,6 +101,7 @@ type Subscription {
 
   type Query {
     posts: [Post]
+    getPostById(id: ID!): Post
     helpRequests: [HelpRequest]
     communityAIQuery(input: String!): AIResponse!
     getAllEmergencyAlerts: [EmergencyAlert!]!
@@ -67,8 +114,8 @@ type Subscription {
     updatePost(id: ID!, title: String, content: String, category: String): Post
     deletePost(id: ID!): Boolean
 
-    createHelpRequest(description: String!, location: String): HelpRequest
-    updateHelpRequest(id: ID!, description: String, location: String, isResolved: Boolean, volunteers: [ID]): HelpRequest
+    createHelpRequest(description: String!, location: String, requiredSkills: [String]): HelpRequest
+    updateHelpRequest(id: ID!, description: String, location: String, isResolved: Boolean, volunteerIds: [ID]): HelpRequest
     deleteHelpRequest(id: ID!): Boolean
     createEmergencyAlert(title: String!, message: String!, location: String!): EmergencyAlert
 

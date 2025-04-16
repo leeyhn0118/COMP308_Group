@@ -54,7 +54,10 @@ const wsServer = new WebSocketServer({
   path: "/graphql",
 });
 
-const server = new ApolloServer({ schema, introspection: true });
+const server = new ApolloServer({
+  schema,
+  introspection: process.env.NODE_ENV !== 'production',
+});
 
 async function startServer() {
   await server.start();

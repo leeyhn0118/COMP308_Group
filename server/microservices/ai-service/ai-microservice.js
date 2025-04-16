@@ -1,29 +1,29 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: './.env' });
-
 import express from 'express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { buildSubgraphSchema } from '@apollo/subgraph';
+import { gql } from 'graphql-tag';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import http from 'http';
-import gql from 'graphql-tag';
 
+import connectDB from './config/mongoose.js';
 import { config } from './config/config.js';
-import typeDefs from './graphql/typeDefs.js';
+
 import resolvers from './graphql/resolvers.js';
+import typeDefs from './graphql/typeDefs.js';
+
+dotenv.config();
 
 const app = express();
 const httpServer = http.createServer(app);
 
-let schema;
-try {
-  schema = buildSubgraphSchema([{ typeDefs, resolvers }]);
-} catch (err) {
-  console.error("Error building subgraph schema in ai-service:", err);
-  const minimalTypeDefs = gql`type Query { _placeholderAI: String }`;
-  schema = buildSubgraphSchema([{ typeDefs: minimalTypeDefs, resolvers: { Query: { _placeholderAI: () => null } } }]);
-}
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'], 
+  credentials: true,
+}));
+
+const schema = buildSubgraphSchema([{ typeDefs, resolvers }]);
 
 const server = new ApolloServer({
   schema,
@@ -31,16 +31,17 @@ const server = new ApolloServer({
 });
 
 async function startServer() {
+  await connectDB();
   await server.start();
 
-  app.use(cors()); 
+  app.use(cors());
   app.use(express.json());
 
-  app.use('/graphql', expressMiddleware(server)); 
+  app.use('/graphql', expressMiddleware(server));
 
-  app.listen(config.port, () => {
-    console.log(`AI Service running at http://localhost:${config.port}/graphql`);
-  });
+  const PORT = config.port;
+  await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
+  console.log(`AI Subgraph running at http://localhost:${PORT}/graphql`);
 }
 
 startServer();
