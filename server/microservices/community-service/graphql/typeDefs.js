@@ -1,4 +1,13 @@
 const typeDefs = `#graphql
+type User {
+    _id: ID!
+    username: String
+    email: String
+    role: String!
+    location: String
+    interests: [String]
+  }
+
   type Post {
     id: ID!
     title: String!
@@ -29,10 +38,28 @@ const typeDefs = `#graphql
     retrievedHelps: [HelpRequest!]
   }
 
+type EmergencyAlert {
+    id: ID!
+    author: User
+    title: String!
+    message: String!
+    location: String!
+    isResolved: Boolean!
+    createdAt: String!
+    updatedAt: String
+  }
+
+type Subscription {
+    emergencyAlertCreated: EmergencyAlert!
+  }
+
   type Query {
     posts: [Post]
     helpRequests: [HelpRequest]
     communityAIQuery(input: String!): AIResponse!
+  getAllEmergencyAlerts: [EmergencyAlert!]!
+    getEmergencyAlert(id: ID!): EmergencyAlert
+
   }
 
   type Mutation {
@@ -43,6 +70,17 @@ const typeDefs = `#graphql
     createHelpRequest(description: String!, location: String): HelpRequest
     updateHelpRequest(id: ID!, description: String, location: String, isResolved: Boolean, volunteers: [ID]): HelpRequest
     deleteHelpRequest(id: ID!): Boolean
+  createEmergencyAlert(title: String!, message: String!, location: String!): EmergencyAlert
+
+    updateEmergencyAlert(
+      id: ID!
+      title: String
+      message: String
+      location: String
+      isResolved: Boolean
+    ): EmergencyAlert!
+
+    deleteEmergencyAlert(id: ID!): Boolean!
   }
 `;
 
