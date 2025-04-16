@@ -1,23 +1,23 @@
 import EmergencyAlert from "../models/Emergency.js";
-import pubsub from "../utils/pubsub.js";
+import pubsub from "../util/pubsub.js";
 import axios from "axios";
 
 const EMERGENCY_ALERT_CREATED = "EMERGENCY_ALERT_CREATED";
 
 const emergencyResolvers = {
-  EmergencyAlert: {
-    author: async (alert) => {
-      try {
-        const { data: user } = await axios.get(
-          `http://localhost:4001/api/user/${alert.author}`,
-        );
-        return user;
-      } catch (err) {
-        console.error("Error resolving author field:", err);
-        return null;
-      }
-    },
-  },
+  // EmergencyAlert: {
+  //   author: async (alert) => {
+  //     try {
+  //       const { data: user } = await axios.get(
+  //         `http://localhost:4001/api/user/${alert.author}`,
+  //       );
+  //       return user;
+  //     } catch (err) {
+  //       console.error("Error resolving author field:", err);
+  //       return null;
+  //     }
+  //   },
+  // },
 
   Query: {
     getAllEmergencyAlerts: async () => {
@@ -63,7 +63,7 @@ const emergencyResolvers = {
 
       try {
         const newAlert = new EmergencyAlert({
-          author: user.id,
+          author: user._id,
           title,
           message,
           location,
