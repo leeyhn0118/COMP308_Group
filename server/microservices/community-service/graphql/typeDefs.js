@@ -57,7 +57,7 @@ type Subscription {
     posts: [Post]
     helpRequests: [HelpRequest]
     communityAIQuery(input: String!): AIResponse!
-  getAllEmergencyAlerts: [EmergencyAlert!]!
+    getAllEmergencyAlerts: [EmergencyAlert!]!
     getEmergencyAlert(id: ID!): EmergencyAlert
 
   }
@@ -70,7 +70,7 @@ type Subscription {
     createHelpRequest(description: String!, location: String): HelpRequest
     updateHelpRequest(id: ID!, description: String, location: String, isResolved: Boolean, volunteers: [ID]): HelpRequest
     deleteHelpRequest(id: ID!): Boolean
-  createEmergencyAlert(title: String!, message: String!, location: String!): EmergencyAlert
+    createEmergencyAlert(title: String!, message: String!, location: String!): EmergencyAlert
 
     updateEmergencyAlert(
       id: ID!

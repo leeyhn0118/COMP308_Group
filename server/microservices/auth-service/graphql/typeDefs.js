@@ -1,12 +1,12 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 const typeDefs = gql`
-
   type User @key(fields: "id") {
-    id: ID! 
+    id: ID!
     username: String!
     email: String!
     role: String
+    location: String
   }
 
   type AuthPayload {
@@ -20,9 +20,16 @@ const typeDefs = gql`
 
   type Mutation {
     login(email: String!, password: String!): AuthPayload
-    register(username: String!, email: String!, password: String!, role: String!): AuthPayload
+    register(
+      username: String!
+      email: String!
+      password: String!
+      role: String!
+      location: String!
+    ): AuthPayload
     logout: Boolean
   }
 `;
 
 export default typeDefs;
+
